@@ -16,7 +16,7 @@ steps { checkout scm }
 
 stage('Build (Maven)') {
 steps {
-sh 'mvn -B -DskipTests package'
+bat 'mvn -B -DskipTests package'
 }
 }
 
@@ -24,7 +24,7 @@ sh 'mvn -B -DskipTests package'
 stage('Build Docker Image') {
 steps {
 script {
-sh "docker build -t ${DOCKERHUB_REPO}:${IMAGE_TAG} ."
+bat "docker build -t ${DOCKERHUB_REPO}:${IMAGE_TAG} ."
 }
 }
 }
@@ -33,8 +33,8 @@ sh "docker build -t ${DOCKERHUB_REPO}:${IMAGE_TAG} ."
 stage('Push to Docker Hub') {
 steps {
 withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKERHUB_USER', passwordVariable: 'DOCKERHUB_PASS')]) {
-sh 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
-sh "docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}"
+bat 'echo $DOCKERHUB_PASS | docker login -u $DOCKERHUB_USER --password-stdin'
+bat "docker push ${DOCKERHUB_REPO}:${IMAGE_TAG}"
 }
 }
 }
