@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Calculator</title>
+<style>
+body { font-family: Arial, sans-serif; display:flex; justify-content:center; align-items:center; height:100vh; background:#f5f5f5; }
+.calc { background:white; padding:20px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.1); width:320px }
+input, select, button { width:100%; padding:8px; margin:6px 0; font-size:16px }
+.result { font-weight:bold; font-size:18px; margin-top:10px }
+</style>
+</head>
+<body>
+<div class="calc">
+<h2>Simple Calculator</h2>
+<input id="a" type="number" placeholder="Enter first number" />
+<input id="b" type="number" placeholder="Enter second number" />
+<select id="op">
+<option value="+">Add (+)</option>
+<option value="-">Subtract (-)</option>
+<option value="*">Multiply (*)</option>
+<option value="/">Divide (/)</option>
+<option value="%">Mod (%)</option>
+</select>
+<button id="compute">Compute</button>
+<div class="result" id="result">Result: —</div>
+</div>
+
+
+<script>
+const aEl = document.getElementById('a');
+const bEl = document.getElementById('b');
+const opEl = document.getElementById('op');
+const resultEl = document.getElementById('result');
+const btn = document.getElementById('compute');
+
+
+btn.addEventListener('click', async () => {
+const payload = { a: aEl.value, b: bEl.value, op: opEl.value };
+try {
+const res = await fetch('/api/calc', {
+method: 'POST',
+headers: { 'Content-Type': 'application/json' },
+body: JSON.stringify(payload)
+});
+const json = await res.json();
+if (json.result !== undefined) {
+resultEl.textContent = 'Result: ' + json.result;
+} else if (json.error) {
+resultEl.textContent = 'Error: ' + json.error;
+} else {
+resultEl.textContent = 'Unexpected response';
+}
+} catch (e) {
+resultEl.textContent = 'Network error';
+}
+});
+</script>
+</body>
+</html>
